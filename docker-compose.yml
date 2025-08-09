@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  getting-to-know-jooq-db:
+    image: postgres:13-alpine
+    restart: always
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_USER: u
+      POSTGRES_PASSWORD: p
+      POSTGRES_DB: getting-to-know-jooq-db
+    volumes:
+      - getting-to-know-jooq-db-data:/var/lib/postgresql/data
+    networks:
+      - getting-to-know-jooq-network
+
+volumes:
+  getting-to-know-jooq-db-data:
+
+networks:
+  getting-to-know-jooq-network:
+    driver: bridge

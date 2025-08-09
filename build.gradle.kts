@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("nu.studer.jooq") version "8.2"
 }
 
 group = "com.agorohov"
@@ -19,8 +20,63 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.postgresql:postgresql:42.7.3")
+	implementation("org.jooq:jooq:3.18.2")
+	jooqGenerator("org.jooq:jooq-codegen:3.18.2")
+	jooqGenerator("org.postgresql:postgresql:42.7.3")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+jooq {
+	version.set("3.18.2")
+
+	configurations {
+		create("main") {
+			jooqConfiguration.apply {
+				logging = org.jooq.meta.jaxb.Logging.WARN
+				jdbc.apply {
+					driver = "org.postgresql.Driver"
+					url = "jdbc:postgresql://localhost:5438/getting-to-know-jooq-db"
+					user = "u"
+					password = "p"
+				}
+				generator.apply {
+					name = "org.jooq.codegen.DefaultGenerator"
+					database.apply {
+						name = "org.jooq.meta.postgres.PostgresDatabase"
+						inputSchema = "public"
+					}
+					generate.apply {
+						isDeprecated = false
+						isRecords = true
+						isImmutablePojos = true
+						isFluentSetters = true
+					}
+					target.apply {
+						packageName = "com.agorohov.jooq.generated"
+						directory = "src/generated/java"
+					}
+				}
+			}
+		}
+	}
+}
+
+tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
+	outputs.dir("src/generated/java")
+}
+
+tasks.named("compileJava") {
+	dependsOn(tasks.named("generateJooq"))
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir("src/generated/java")
+		}
+	}
 }
 
 tasks.withType<Test> {
