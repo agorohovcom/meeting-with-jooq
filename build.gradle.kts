@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.SourceSetContainer
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.5.4"
@@ -37,7 +39,7 @@ jooq {
 				logging = org.jooq.meta.jaxb.Logging.WARN
 				jdbc.apply {
 					driver = "org.postgresql.Driver"
-					url = "jdbc:postgresql://localhost:5438/getting-to-know-jooq-db"
+					url = "jdbc:postgresql://localhost:5438/meeting-with-jooq?currentSchema=myschema"
 					user = "u"
 					password = "p"
 				}
@@ -45,7 +47,7 @@ jooq {
 					name = "org.jooq.codegen.DefaultGenerator"
 					database.apply {
 						name = "org.jooq.meta.postgres.PostgresDatabase"
-						inputSchema = "public"
+						inputSchema = "myschema"
 					}
 					generate.apply {
 						isDeprecated = false
@@ -71,13 +73,8 @@ tasks.named("compileJava") {
 	dependsOn(tasks.named("generateJooq"))
 }
 
-sourceSets {
-	main {
-		java {
-			srcDir("src/generated/java")
-		}
-	}
-}
+val sourceSets = project.extensions.getByType<SourceSetContainer>()
+sourceSets["main"].java.srcDir("src/generated/java")
 
 tasks.withType<Test> {
 	useJUnitPlatform()

@@ -1,23 +1,24 @@
 version: '3.8'
 
 services:
-  getting-to-know-jooq-db:
-    image: postgres:13-alpine
+  meeting-with-jooq-db:
+    image: postgres:15-alpine
     restart: always
     ports:
       - "5438:5432"
     environment:
       POSTGRES_USER: u
       POSTGRES_PASSWORD: p
-      POSTGRES_DB: getting-to-know-jooq-db
+      POSTGRES_DB: meeting-with-jooq
     volumes:
-      - getting-to-know-jooq-db-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+      - meeting-with-jooq-db-data:/var/lib/postgresql/data
     networks:
-      - getting-to-know-jooq-network
+      - meeting-with-jooq-network
 
 volumes:
-  getting-to-know-jooq-db-data:
+  meeting-with-jooq-db-data:
 
 networks:
-  getting-to-know-jooq-network:
+  meeting-with-jooq-network:
     driver: bridge
