@@ -1,10 +1,10 @@
-import org.gradle.api.tasks.SourceSetContainer
+val jooqVersion = "3.19.24"
 
 plugins {
 	java
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
-	id("nu.studer.jooq") version "8.2"
+	id("nu.studer.jooq") version "9.0"
 }
 
 group = "com.agorohov"
@@ -23,16 +23,16 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.postgresql:postgresql:42.7.3")
-	implementation("org.jooq:jooq:3.18.2")
-	jooqGenerator("org.jooq:jooq-codegen:3.18.2")
+	implementation("org.jooq:jooq:$jooqVersion")
+	jooqGenerator("org.jooq:jooq-codegen:$jooqVersion")
+	jooqGenerator("org.jooq:jooq-meta:$jooqVersion")
 	jooqGenerator("org.postgresql:postgresql:42.7.3")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 jooq {
-	version.set("3.18.2")
-
+	version.set(jooqVersion)
 	configurations {
 		create("main") {
 			jooqConfiguration.apply {
@@ -48,6 +48,8 @@ jooq {
 					database.apply {
 						name = "org.jooq.meta.postgres.PostgresDatabase"
 						inputSchema = "myschema"
+						includes = ".*"
+						excludes = ""
 					}
 					generate.apply {
 						isDeprecated = false
@@ -73,8 +75,23 @@ tasks.named("compileJava") {
 	dependsOn(tasks.named("generateJooq"))
 }
 
-val sourceSets = project.extensions.getByType<SourceSetContainer>()
-sourceSets["main"].java.srcDir("src/generated/java")
+tasks.named("clean") {
+	doFirst {
+		delete("src/generated/java")
+	}
+}
+
+tasks.named("bootRun") {
+	dependsOn(tasks.named("generateJooq"))
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir("src/generated/java")
+		}
+	}
+}
 
 tasks.withType<Test> {
 	useJUnitPlatform()
