@@ -22,22 +22,20 @@ public class CompanyService {
     public List<CompanyResponseDto> getAll() {
         return repository.findAll().stream()
                 .map(e -> new CompanyResponseDto(
-                                e.getId(),
-                                e.getName(),
-                                e.getBudget()
-                        )
-                )
+                        e.getId(),
+                        e.getName(),
+                        e.getBudget()
+                ))
                 .toList();
     }
 
     public Optional<CompanyResponseDto> getById(Integer id) {
         return repository.findById(id)
                 .map(e -> new CompanyResponseDto(
-                                e.getId(),
-                                e.getName(),
-                                e.getBudget()
-                        )
-                );
+                        e.getId(),
+                        e.getName(),
+                        e.getBudget()
+                ));
     }
 
     public CompanyResponseDto create(CreateCompanyDto companyDto) {

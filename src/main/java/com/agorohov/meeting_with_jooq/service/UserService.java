@@ -4,6 +4,7 @@ import com.agorohov.jooq.generated.tables.pojos.Users;
 import com.agorohov.meeting_with_jooq.dto.user.CreateUserDto;
 import com.agorohov.meeting_with_jooq.dto.user.UpdateUserDto;
 import com.agorohov.meeting_with_jooq.dto.user.UserResponseDto;
+import com.agorohov.meeting_with_jooq.dto.user.UserWithCompanyNameResponseDto;
 import com.agorohov.meeting_with_jooq.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,24 +23,33 @@ public class UserService {
     public List<UserResponseDto> getAll() {
         return repository.findAll().stream()
                 .map(e -> new UserResponseDto(
-                                e.getId(),
-                                e.getName(),
-                                e.getAge(),
-                                e.getCompanyId()
-                        )
-                )
+                        e.getId(),
+                        e.getName(),
+                        e.getAge(),
+                        e.getCompanyId()
+                ))
                 .toList();
     }
 
     public Optional<UserResponseDto> getById(Integer id) {
         return repository.findById(id)
                 .map(e -> new UserResponseDto(
-                                e.getId(),
-                                e.getName(),
-                                e.getAge(),
-                                e.getCompanyId()
-                        )
-                );
+                        e.getId(),
+                        e.getName(),
+                        e.getAge(),
+                        e.getCompanyId()
+                ));
+    }
+
+    public Optional<UserWithCompanyNameResponseDto> getByIdWithCompanyName(Integer id) {
+        return repository.findByIdWithCompanyName(id)
+                .map(e -> new UserWithCompanyNameResponseDto(
+                        e.component1(),
+                        e.component2(),
+                        e.component3(),
+                        e.component4(),
+                        e.component5()
+                ));
     }
 
     public UserResponseDto create(CreateUserDto userDto) {

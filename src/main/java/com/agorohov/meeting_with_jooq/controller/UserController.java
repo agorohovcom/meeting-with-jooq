@@ -3,6 +3,7 @@ package com.agorohov.meeting_with_jooq.controller;
 import com.agorohov.meeting_with_jooq.dto.user.CreateUserDto;
 import com.agorohov.meeting_with_jooq.dto.user.UpdateUserDto;
 import com.agorohov.meeting_with_jooq.dto.user.UserResponseDto;
+import com.agorohov.meeting_with_jooq.dto.user.UserWithCompanyNameResponseDto;
 import com.agorohov.meeting_with_jooq.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -36,6 +37,13 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getById(@Positive @PathVariable Integer id) {
         return service.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/with-company-name")
+    public ResponseEntity<UserWithCompanyNameResponseDto> getByIdWithCompanyName(@Positive @PathVariable Integer id) {
+        return service.getByIdWithCompanyName(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
