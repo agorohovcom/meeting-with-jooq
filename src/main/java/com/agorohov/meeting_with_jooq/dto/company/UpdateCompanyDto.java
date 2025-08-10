@@ -1,12 +1,14 @@
-package com.agorohov.meeting_with_jooq.dto;
+package com.agorohov.meeting_with_jooq.dto.company;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 
-public class CompanyDto {
+public class UpdateCompanyDto {
 
+    @Positive(message = "ID is required")
     private Integer id;
 
     @NotBlank(message = "Name is required")
@@ -15,10 +17,10 @@ public class CompanyDto {
     @PositiveOrZero(message = "Budget must be non-negative")
     private BigDecimal budget;
 
-    public CompanyDto() {
+    public UpdateCompanyDto() {
     }
 
-    public CompanyDto(Integer id, String name, BigDecimal budget) {
+    public UpdateCompanyDto(Integer id, String name, BigDecimal budget) {
         this.id = id;
         this.name = name;
         this.budget = budget;

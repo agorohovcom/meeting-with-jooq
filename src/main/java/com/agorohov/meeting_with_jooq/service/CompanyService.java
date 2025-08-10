@@ -1,6 +1,9 @@
 package com.agorohov.meeting_with_jooq.service;
 
 import com.agorohov.jooq.generated.tables.pojos.Company;
+import com.agorohov.meeting_with_jooq.dto.company.CompanyResponseDto;
+import com.agorohov.meeting_with_jooq.dto.company.CreateCompanyDto;
+import com.agorohov.meeting_with_jooq.dto.company.UpdateCompanyDto;
 import com.agorohov.meeting_with_jooq.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +19,39 @@ public class CompanyService {
         this.repository = repository;
     }
 
-    public List<Company> getAll() {
-        return repository.findAll();
+    public List<CompanyResponseDto> getAll() {
+        return repository.findAll().stream()
+                .map(e -> new CompanyResponseDto(
+                                e.getId(),
+                                e.getName(),
+                                e.getBudget()
+                        )
+                )
+                .toList();
     }
 
-    public Optional<Company> getById(Integer id) {
-        return repository.findById(id);
+    public Optional<CompanyResponseDto> getById(Integer id) {
+        return repository.findById(id)
+                .map(e -> new CompanyResponseDto(
+                                e.getId(),
+                                e.getName(),
+                                e.getBudget()
+                        )
+                );
     }
 
-    public Company create(Company company) {
-        return repository.create(company);
+    public CompanyResponseDto create(CreateCompanyDto companyDto) {
+        Company company = new Company(null, companyDto.getName(), companyDto.getBudget());
+        Company companyResponse = repository.create(company);
+        return new CompanyResponseDto(
+                companyResponse.getId(),
+                companyResponse.getName(),
+                companyResponse.getBudget()
+        );
     }
 
-    public void update(Company company) {
+    public void update(UpdateCompanyDto companyDto) {
+        Company company = new Company(companyDto.getId(), companyDto.getName(), companyDto.getBudget());
         repository.update(company);
     }
 

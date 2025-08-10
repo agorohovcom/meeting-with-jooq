@@ -1,10 +1,11 @@
-package com.agorohov.meeting_with_jooq.dto;
+package com.agorohov.meeting_with_jooq.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
-public class UserDto {
+public class UpdateUserDto {
 
+    @Positive(message = "ID is required")
     private Integer id;
 
     @NotBlank(message = "Name is required")
@@ -16,10 +17,10 @@ public class UserDto {
     @Positive(message = "Company ID must be positive")
     private Integer companyId;
 
-    public UserDto() {
+    public UpdateUserDto() {
     }
 
-    public UserDto(Integer id, String name, Integer age, Integer companyId) {
+    public UpdateUserDto(Integer id, String name, Integer age, Integer companyId) {
         this.id = id;
         this.name = name;
         this.age = age;

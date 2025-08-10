@@ -1,7 +1,8 @@
 package com.agorohov.meeting_with_jooq.controller;
 
-import com.agorohov.jooq.generated.tables.pojos.Users;
-import com.agorohov.meeting_with_jooq.dto.UserDto;
+import com.agorohov.meeting_with_jooq.dto.user.CreateUserDto;
+import com.agorohov.meeting_with_jooq.dto.user.UpdateUserDto;
+import com.agorohov.meeting_with_jooq.dto.user.UserResponseDto;
 import com.agorohov.meeting_with_jooq.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -28,27 +29,29 @@ public class UserController {
     }
 
     @GetMapping
-    public List<Users> getAll() {
+    public List<UserResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Users> getById(@Positive @PathVariable Integer id) {
+    public ResponseEntity<UserResponseDto> getById(@Positive @PathVariable Integer id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Users create(@Valid @RequestBody UserDto userDto) {
-        Users user = new Users(null, userDto.getName(), userDto.getAge(), userDto.getCompanyId());
-        return service.create(user);
+    public UserResponseDto create(@Valid @RequestBody CreateUserDto userDto) {
+        return service.create(userDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Positive @PathVariable Integer id, @Valid @RequestBody UserDto userDto) {
-        Users user = new Users(id, userDto.getName(), userDto.getAge(), userDto.getCompanyId());
-        service.update(user);
+    public ResponseEntity<Void> update(
+            @Positive @PathVariable Integer id,
+            @Valid @RequestBody UpdateUserDto userDto
+    ) {
+        userDto.setId(id);
+        service.update(userDto);
         return ResponseEntity.ok().build();
     }
 

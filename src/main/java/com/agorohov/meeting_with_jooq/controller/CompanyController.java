@@ -1,7 +1,8 @@
 package com.agorohov.meeting_with_jooq.controller;
 
-import com.agorohov.jooq.generated.tables.pojos.Company;
-import com.agorohov.meeting_with_jooq.dto.CompanyDto;
+import com.agorohov.meeting_with_jooq.dto.company.CompanyResponseDto;
+import com.agorohov.meeting_with_jooq.dto.company.CreateCompanyDto;
+import com.agorohov.meeting_with_jooq.dto.company.UpdateCompanyDto;
 import com.agorohov.meeting_with_jooq.service.CompanyService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -28,27 +29,29 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<Company> getAll() {
+    public List<CompanyResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Company> getById(@Positive @PathVariable Integer id) {
+    public ResponseEntity<CompanyResponseDto> getById(@Positive @PathVariable Integer id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Company create(@Valid @RequestBody CompanyDto companyDto) {
-        Company company = new Company(null, companyDto.getName(), companyDto.getBudget());
-        return service.create(company);
+    public CompanyResponseDto create(@Valid @RequestBody CreateCompanyDto companyDto) {
+        return service.create(companyDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Positive @PathVariable Integer id, @Valid @RequestBody CompanyDto companyDto) {
-        Company company = new Company(id, companyDto.getName(), companyDto.getBudget());
-        service.update(company);
+    public ResponseEntity<Void> update(
+            @Positive @PathVariable Integer id,
+            @Valid @RequestBody UpdateCompanyDto companyDto
+    ) {
+        companyDto.setId(id);
+        service.update(companyDto);
         return ResponseEntity.ok().build();
     }
 
