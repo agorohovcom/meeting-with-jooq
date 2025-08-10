@@ -1,7 +1,10 @@
 package com.agorohov.meeting_with_jooq.controller;
 
 import com.agorohov.jooq.generated.tables.pojos.Users;
+import com.agorohov.meeting_with_jooq.dto.UserDto;
 import com.agorohov.meeting_with_jooq.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,26 +33,27 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Users> getById(@PathVariable Integer id) {
+    public ResponseEntity<Users> getById(@Positive @PathVariable Integer id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Users create(@RequestBody Users user) {
+    public Users create(@Valid @RequestBody UserDto userDto) {
+        Users user = new Users(null, userDto.getName(), userDto.getAge(), userDto.getCompanyId());
         return service.create(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Users user) {
-        Users updatedUser = new Users(id, user.getName(), user.getAge(), user.getCompanyId());
+    public ResponseEntity<Void> update(@Positive @PathVariable Integer id, @Valid @RequestBody UserDto userDto) {
+        Users user = new Users(id, userDto.getName(), userDto.getAge(), userDto.getCompanyId());
         service.update(user);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@Positive @PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

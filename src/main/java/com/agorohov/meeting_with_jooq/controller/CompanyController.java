@@ -1,7 +1,10 @@
 package com.agorohov.meeting_with_jooq.controller;
 
 import com.agorohov.jooq.generated.tables.pojos.Company;
+import com.agorohov.meeting_with_jooq.dto.CompanyDto;
 import com.agorohov.meeting_with_jooq.service.CompanyService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,26 +33,27 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Company> getById(@PathVariable Integer id) {
+    public ResponseEntity<Company> getById(@Positive @PathVariable Integer id) {
         return service.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Company create(@RequestBody Company company) {
+    public Company create(@Valid @RequestBody CompanyDto companyDto) {
+        Company company = new Company(null, companyDto.getName(), companyDto.getBudget());
         return service.create(company);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Integer id, @RequestBody Company company) {
-        Company updatedCompany = new Company(id, company.getName(), company.getBudget());
-        service.update(updatedCompany);
+    public ResponseEntity<Void> update(@Positive @PathVariable Integer id, @Valid @RequestBody CompanyDto companyDto) {
+        Company company = new Company(id, companyDto.getName(), companyDto.getBudget());
+        service.update(company);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@Positive @PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

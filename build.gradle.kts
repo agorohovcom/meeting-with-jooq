@@ -23,6 +23,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-jooq")
+	implementation("org.springframework.boot:spring-boot-starter-validation:3.5.4")
 	implementation("org.postgresql:postgresql:42.7.3")
 	implementation("org.jooq:jooq:$jooqVersion")
 	jooqGenerator("org.jooq:jooq-codegen:$jooqVersion")
