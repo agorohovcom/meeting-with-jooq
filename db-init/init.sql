@@ -13,3 +13,12 @@ CREATE TABLE IF NOT EXISTS myschema.users (
     company_id INT,
     CONSTRAINT fk_company FOREIGN KEY (company_id) REFERENCES myschema.company(id) ON DELETE SET NULL
 );
+
+-- Добавляем записи в company
+INSERT INTO myschema.company (name, budget) VALUES ('ABV Tech', 1000000.00);
+INSERT INTO myschema.company (name, budget) VALUES ('Citrys', 50000000.00);
+
+-- Добавляем записи в users
+INSERT INTO myschema.users (name, age, company_id) VALUES ('Sasha', 35, 1);
+INSERT INTO myschema.users (name, age, company_id) VALUES ('Dasha', 21, 1);
+INSERT INTO myschema.users (name, age, company_id) VALUES ('Gena', 53, 2);
